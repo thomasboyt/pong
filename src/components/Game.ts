@@ -4,10 +4,26 @@ import NetworkingClient from '../networking/components/NetworkingClient';
 import NetworkingHost from '../networking/components/NetworkingHost';
 import NetworkedPhysical from '../networking/components/NetworkedPhysical';
 import Player from './Player';
+import Ball from './Ball';
 
 interface Opts {
   isHost: boolean;
   roomCode?: string;
+}
+
+function showRoomCode(roomCode: string) {
+  console.log('roomCode:', roomCode);
+  const url =
+    document.location.origin +
+    document.location.pathname +
+    `?roomCode=${roomCode}`;
+  console.log('link', url);
+
+  const roomLink = document.querySelector('a.room-link');
+  if (roomLink instanceof HTMLAnchorElement) {
+    roomLink.href = url;
+    roomLink.innerText = url;
+  }
 }
 
 const groovejetUrl = process.env.LOBBY_SERVER || 'localhost:3000';
@@ -29,7 +45,7 @@ export default class Game extends Component<Opts> {
     const host = this.getComponent(NetworkingHost);
     const roomCode = yield host.connect(groovejetUrl);
 
-    this.handleRoomCode(roomCode);
+    showRoomCode(roomCode);
 
     host.onPlayerAdded.add(({ networkingPlayer }) => {
       const players = this.pearl.entities.all(Tag.Player);
@@ -71,16 +87,7 @@ export default class Game extends Component<Opts> {
       groovejetUrl,
       roomCode,
     });
-    this.handleRoomCode(roomCode);
-  }
-
-  handleRoomCode(roomCode: string) {
-    console.log('roomCode:', roomCode);
-    const url =
-      document.location.origin +
-      document.location.pathname +
-      `?roomCode=${roomCode}`;
-    console.log('link', url);
+    showRoomCode(roomCode);
   }
 
   createWalls() {
@@ -117,7 +124,7 @@ export default class Game extends Component<Opts> {
     const center = this.pearl.renderer.getViewCenter();
     ctx.fillRect(center.x - size.x / 2, center.y - size.y / 2, size.x, size.y);
 
-    ctx.font = '16px monospace';
+    ctx.font = '12px monospace';
     ctx.fillStyle = 'white';
     ctx.textAlign = 'center';
 
