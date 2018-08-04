@@ -114,8 +114,8 @@ export default class Game extends Component<Opts> {
       );
     };
 
-    makeWall(0);
-    makeWall(worldSize.y);
+    makeWall(-10);
+    makeWall(worldSize.y + 10);
   }
 
   render(ctx: CanvasRenderingContext2D) {
