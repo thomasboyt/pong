@@ -1,8 +1,10 @@
 import { Component, Physical, BoxCollider, Entity } from 'pearl';
 import { Tag, ZIndex } from '../types';
-import NetworkingClient from '../networking/components/NetworkingClient';
-import NetworkingHost from '../networking/components/NetworkingHost';
-import NetworkedPhysical from '../networking/components/NetworkedPhysical';
+import {
+  NetworkingClient,
+  NetworkingHost,
+  NetworkedPhysical,
+} from 'pearl-networking';
 import Player from './Player';
 import Ball from './Ball';
 

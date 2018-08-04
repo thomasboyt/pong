@@ -1,7 +1,6 @@
 import { createPearl } from 'pearl';
 import Game from './components/Game';
-import NetworkingHost from './networking/components/NetworkingHost';
-import NetworkingClient from './networking/components/NetworkingClient';
+import {NetworkingHost, NetworkingClient} from 'pearl-networking'
 import networkedPrefabs from './networkedPrefabs';
 
 interface Opts {
@@ -9,7 +8,7 @@ interface Opts {
   roomCode?: string;
 }
 
-async function main(opts: Opts) {
+async function createGame(opts: Opts) {
   const { isHost, roomCode } = opts;
 
   let networkingComponent;
@@ -38,7 +37,7 @@ async function main(opts: Opts) {
 const params = new URLSearchParams(document.location.search.slice(1));
 const roomCode = params.get('roomCode');
 if (roomCode !== null) {
-  main({ isHost: false, roomCode });
+  createGame({ isHost: false, roomCode });
 } else {
-  main({ isHost: true });
+  createGame({ isHost: true });
 }

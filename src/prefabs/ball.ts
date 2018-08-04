@@ -1,5 +1,4 @@
-import { NetworkedPrefab } from '../networking/components/Networking';
-import NetworkedPhysical from '../networking/components/NetworkedPhysical';
+import { NetworkedPrefab, NetworkedPhysical } from 'pearl-networking';
 import { CircleCollider, CircleRenderer, KinematicBody } from 'pearl';
 import Ball from '../components/Ball';
 

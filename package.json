@@ -19,7 +19,8 @@
     "fast-equals": "^1.5.3",
     "lodash-es": "^4.17.10",
     "micro-memoize": "^2.0.3",
-    "pearl": "git://github.com/thomasboyt/pearl.git",
+    "pearl": "0.0.7",
+    "pearl-networking": "0.0.7",
     "uuid": "^3.3.2"
   },
   "devDependencies": {

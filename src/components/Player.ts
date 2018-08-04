@@ -1,6 +1,5 @@
 import { Component, Physical, Keys, BoxCollider } from 'pearl';
-import NetworkedEntity from '../networking/components/NetworkedEntity';
-import NetworkingHost from '../networking/components/NetworkingHost';
+import { NetworkedEntity, NetworkingHost } from 'pearl-networking';
 
 export default class Player extends Component<void> {
   id?: number;

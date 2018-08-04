@@ -6,7 +6,7 @@ import {
   Physical,
   CircleCollider,
 } from 'pearl';
-import NetworkedEntity from '../networking/components/NetworkedEntity';
+import { NetworkedEntity } from 'pearl-networking';
 import { Tag } from '../types';
 
 // TODO: Move into VectorMaths
