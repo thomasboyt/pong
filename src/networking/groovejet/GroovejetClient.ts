@@ -23,8 +23,8 @@ export default class GroovejetClient {
   onHostAnswerSignal?: OnHostAnswerSignal;
 
   constructor(opts: GroovejetOptions) {
-    // TODO: allow wss://
-    let url = `ws://${opts.url}/?code=${opts.roomCode}`;
+    const protocol = document.location.protocol === 'https:' ? 'wss' : 'ws';
+    let url = `${protocol}://${opts.url}/?code=${opts.roomCode}`;
 
     if (opts.isHost) {
       url += '&host';

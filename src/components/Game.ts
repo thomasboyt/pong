@@ -10,7 +10,7 @@ interface Opts {
   roomCode?: string;
 }
 
-const groovejetUrl = 'localhost:3000';
+const groovejetUrl = process.env.LOBBY_SERVER || 'localhost:3000';
 
 export default class Game extends Component<Opts> {
   isHost!: boolean;
@@ -80,7 +80,11 @@ export default class Game extends Component<Opts> {
 
   handleRoomCode(roomCode: string) {
     console.log('roomCode:', roomCode);
-    console.log('link', `${document.location.origin}/?roomCode=${roomCode}`);
+    const url =
+      document.location.origin +
+      document.location.pathname +
+      `?roomCode=${roomCode}`;
+    console.log('link', url);
   }
 
   createWalls() {

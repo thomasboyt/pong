@@ -32,4 +32,13 @@ module.exports = {
     filename: 'main.js',
     path: path.resolve(__dirname, '../dist'),
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        LOBBY_SERVER: JSON.stringify(
+          process.env.LOBBY_SERVER || 'localhost:3000'
+        ),
+      },
+    }),
+  ],
 };
