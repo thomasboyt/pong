@@ -35,11 +35,11 @@ export default class GroovejetClient {
     this.ws.onmessage = this.handleMessage.bind(this);
     this.ws.onclose = this.handleClose.bind(this);
 
-    if (this.onOpen) {
-      this.onOpen = opts.onOpen!;
+    if (opts.onOpen) {
+      this.onOpen = opts.onOpen;
     }
-    if (this.onClose) {
-      this.onClose = opts.onClose!;
+    if (opts.onClose) {
+      this.onClose = opts.onClose;
     }
 
     this.onClientOfferSignal = opts.onClientOfferSignal;
