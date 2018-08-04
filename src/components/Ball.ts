@@ -22,7 +22,28 @@ const reflect = (vec: Vector2, normal: Vector2): Vector2 => {
 
 export default class Ball extends Component<void> {
   vel: Vector2 = { x: -1, y: 0 };
-  speed = 0.2;
+  initialSpeed = 0.1;
+  maxSpeed = 0.3;
+  speed = this.initialSpeed;
+
+  init() {
+    const screenSize = this.pearl.renderer.getViewSize();
+    this.getComponent(Physical).center = {
+      x: screenSize.x / 2,
+      y: screenSize.y / 2,
+    };
+  }
+
+  serve() {
+    const direction = Math.random() > 0.5 ? 1 : -1;
+    const screenSize = this.pearl.renderer.getViewSize();
+    this.getComponent(Physical).center = {
+      x: screenSize.x / 2 - direction * 100,
+      y: screenSize.y / 2,
+    };
+    this.speed = this.initialSpeed;
+    this.vel = { x: direction, y: 0 };
+  }
 
   update(dt: number) {
     if (!this.getComponent(NetworkedObject).isHost) {
@@ -35,12 +56,17 @@ export default class Ball extends Component<void> {
 
     if (collisions.length) {
       const collision = collisions[0];
+
       if (collision.entity.hasTag(Tag.Player)) {
         // bounce off at angle relative to paddle center
         const paddleCenter = collision.entity.getComponent(Physical).center;
         const ballCenter = this.getComponent(Physical).center;
         const vec = V.subtract(ballCenter, paddleCenter);
         this.vel = V.unit(vec);
+        this.speed += 0.01;
+        if (this.speed > this.maxSpeed) {
+          this.speed = this.maxSpeed;
+        }
       } else {
         // reflect off contacted surface
         const overlap = collision.response.overlapVector;
@@ -53,10 +79,7 @@ export default class Ball extends Component<void> {
     const screenSize = this.pearl.renderer.getViewSize();
 
     if (bounds.xMax < 0 || bounds.xMin > screenSize.x) {
-      this.getComponent(Physical).center = {
-        x: screenSize.x / 2,
-        y: screenSize.y / 2,
-      };
+      this.serve();
     }
   }
 }

@@ -47,12 +47,8 @@ export default class Game extends Component<Opts> {
       };
 
       if (!firstPlayer) {
-        console.log('creating ball!');
         const ball = host.createNetworkedPrefab('ball');
-        ball.getComponent(NetworkedPhysical).center = {
-          x: viewSize.x / 2,
-          y: viewSize.y / 2,
-        };
+        ball.getComponent(Ball).serve();
       }
     });
 
@@ -111,8 +107,8 @@ export default class Game extends Component<Opts> {
       );
     };
 
-    makeWall(10);
-    makeWall(worldSize.y - 10);
+    makeWall(0);
+    makeWall(worldSize.y);
   }
 
   render(ctx: CanvasRenderingContext2D) {
