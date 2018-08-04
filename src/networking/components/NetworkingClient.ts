@@ -20,6 +20,7 @@ export default class NetworkingClient extends Networking {
   errorReason?: string;
   private snapshotClock = 0;
   private inputter?: PlayerInputter;
+  isHost = false;
 
   connect(connectionOptions: ConnectionOptions) {
     const connection = new ClientConnection(connectionOptions.groovejetUrl);

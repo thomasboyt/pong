@@ -27,6 +27,7 @@ export default abstract class Networking extends Component<Opts> {
   prefabs!: { [_: string]: NetworkedPrefab };
   networkedObjects = new Map<string, GameObject>();
   localPlayerId?: number;
+  abstract isHost: boolean;
 
   create(opts: Opts) {
     this.prefabs = opts.prefabs;

@@ -1,3 +1,4 @@
 import ball from './prefabs/ball';
+import player from './prefabs/player';
 
-export default { ball };
+export default { ball, player };

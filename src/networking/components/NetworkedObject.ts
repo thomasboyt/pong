@@ -2,7 +2,7 @@ import { Component, GameObject, Entity } from 'pearl';
 import Networking from './Networking';
 import * as uuidv4 from 'uuid/v4';
 
-interface Opts<T> {
+interface Opts {
   type: string;
   networking: Networking;
   id?: string;
@@ -15,19 +15,23 @@ interface NetworkedComponent extends Component<any> {
   deserialize: (snapshot: Snapshot, entitiesById: Map<String, Entity>) => void;
 }
 
-export default class NetworkedObject<T> extends Component<Opts<T>> {
+export default class NetworkedObject extends Component<Opts> {
   networking!: Networking;
 
   id = uuidv4();
   type!: string;
 
-  create(opts: Opts<T>) {
+  create(opts: Opts) {
     this.networking = opts.networking;
     this.type = opts.type;
 
     if (opts.id !== undefined) {
       this.id = opts.id;
     }
+  }
+
+  get isHost() {
+    return this.networking.isHost;
   }
 
   hostSerialize(): Snapshot {

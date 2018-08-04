@@ -1,13 +1,14 @@
 import { GameObject } from 'pearl';
 
 import Networking, { Snapshot, SnapshotObject } from './Networking';
-import Delegate from '../util/Delegate';
 import NetworkedObject from './NetworkedObject';
+import Delegate from '../util/Delegate';
 import HostConnection from '../HostConnection';
 
 let playerIdCounter = 0;
 
-const MAX_CLIENTS = 4;
+// TODO: HOLY SHIT MOVE THIS AAA
+const MAX_CLIENTS = 2;
 
 interface OnPlayerAddedMsg {
   networkingPlayer: NetworkingPlayer;
@@ -63,6 +64,7 @@ export default class NetworkingHost extends Networking {
   connectionState: 'connecting' | 'open' | 'closed' = 'connecting';
   private connection!: HostConnection;
   private snapshotClock = 0;
+  isHost = true;
 
   // XXX: might be good in the future to have this use coroutines, once
   // coroutines can yield other coroutines. for now, should be okay since this
@@ -102,7 +104,7 @@ export default class NetworkingHost extends Networking {
     return promise;
   }
 
-  onPeerConnected(peerId: string) {
+  private onPeerConnected(peerId: string) {
     if (this.players.size === MAX_CLIENTS) {
       this.connection.sendPeer(
         peerId,
@@ -131,7 +133,7 @@ export default class NetworkingHost extends Networking {
     );
   }
 
-  onPeerMessage(peerId: string, data: string) {
+  private onPeerMessage(peerId: string, data: string) {
     const player = this.players.get(this.peerIdToPlayerId.get(peerId)!)!;
     const msg = JSON.parse(data);
 
@@ -145,7 +147,7 @@ export default class NetworkingHost extends Networking {
     }
   }
 
-  onPeerDisconnect(peerId: string) {
+  private onPeerDisconnect(peerId: string) {
     if (!this.peerIdToPlayerId.has(peerId)) {
       // this can happen if the socket is closed before the player is added
       return;
@@ -157,7 +159,7 @@ export default class NetworkingHost extends Networking {
     this.removePlayer(player);
   }
 
-  addPlayer(opts: AddPlayerOpts): NetworkingPlayer {
+  private addPlayer(opts: AddPlayerOpts): NetworkingPlayer {
     const playerId = playerIdCounter;
     playerIdCounter += 1;
 
@@ -182,7 +184,7 @@ export default class NetworkingHost extends Networking {
     this.setIdentity(player.id);
   }
 
-  removePlayer(player: NetworkingPlayer): void {
+  private removePlayer(player: NetworkingPlayer): void {
     this.onPlayerRemoved.call({ networkingPlayer: player });
   }
 
@@ -209,7 +211,7 @@ export default class NetworkingHost extends Networking {
     });
   }
 
-  onClientKeyDown(player: NetworkingPlayer, keyCode: number) {
+  private onClientKeyDown(player: NetworkingPlayer, keyCode: number) {
     if (player.inputter instanceof NetworkedInputter) {
       if (!player.inputter.keysDown.has(keyCode)) {
         player.inputter.keysDown.add(keyCode);
@@ -218,7 +220,7 @@ export default class NetworkingHost extends Networking {
     }
   }
 
-  onClientKeyUp(player: NetworkingPlayer, keyCode: number) {
+  private onClientKeyUp(player: NetworkingPlayer, keyCode: number) {
     if (player.inputter instanceof NetworkedInputter) {
       player.inputter.keysDown.delete(keyCode);
     }
