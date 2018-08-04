@@ -15,7 +15,7 @@ interface NetworkedComponent extends Component<any> {
   deserialize: (snapshot: Snapshot, entitiesById: Map<String, Entity>) => void;
 }
 
-export default class NetworkedObject extends Component<Opts> {
+export default class NetworkedEntity extends Component<Opts> {
   networking!: Networking;
 
   id = uuidv4();
@@ -63,7 +63,7 @@ export default class NetworkedObject extends Component<Opts> {
 
   onDestroy() {
     if (this.networking) {
-      this.networking.deregisterNetworkedObject(this.gameObject);
+      this.networking.deregisterNetworkedEntity(this.gameObject);
     }
   }
 }

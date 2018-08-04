@@ -1,5 +1,5 @@
 import { Component, Physical, Keys, BoxCollider } from 'pearl';
-import NetworkedObject from '../networking/components/NetworkedObject';
+import NetworkedEntity from '../networking/components/NetworkedEntity';
 import NetworkingHost from '../networking/components/NetworkingHost';
 
 export default class Player extends Component<void> {
@@ -7,11 +7,11 @@ export default class Player extends Component<void> {
   speed = 0.15;
 
   update(dt: number) {
-    if (!this.getComponent(NetworkedObject).isHost) {
+    if (!this.getComponent(NetworkedEntity).isHost) {
       return;
     }
 
-    const host = this.getComponent(NetworkedObject)
+    const host = this.getComponent(NetworkedEntity)
       .networking as NetworkingHost;
     const inputter = host.players.get(this.id!)!.inputter;
 

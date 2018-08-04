@@ -6,7 +6,7 @@ import {
   Physical,
   CircleCollider,
 } from 'pearl';
-import NetworkedObject from '../networking/components/NetworkedObject';
+import NetworkedEntity from '../networking/components/NetworkedEntity';
 import { Tag } from '../types';
 
 // TODO: Move into VectorMaths
@@ -46,7 +46,7 @@ export default class Ball extends Component<void> {
   }
 
   update(dt: number) {
-    if (!this.getComponent(NetworkedObject).isHost) {
+    if (!this.getComponent(NetworkedEntity).isHost) {
       return;
     }
 

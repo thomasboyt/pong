@@ -3,7 +3,7 @@ import Networking, { Snapshot } from './Networking';
 
 // TODO: replace this with something better?
 import PlayerInputter from '../util/PlayerInputter';
-import NetworkedObject from './NetworkedObject';
+import NetworkedEntity from './NetworkedEntity';
 import { RpcMessage } from './NetworkingHost';
 import ClientConnection from '../ClientConnection';
 
@@ -107,13 +107,13 @@ export default class NetworkingClient extends Networking {
     }
     this.snapshotClock = clock;
 
-    const unseenIds = new Set(this.networkedObjects.keys());
+    const unseenIds = new Set(this.networkedEntities.keys());
 
     // first, find any prefabs that don't exist, and create them. this happens
     // first so entities that are created on the same frame can still be linked
     // together
     const newObjects = snapshot.objects.filter(
-      (obj) => !this.networkedObjects.has(obj.id)
+      (obj) => !this.networkedEntities.has(obj.id)
     );
 
     for (let snapshotObject of newObjects) {
@@ -121,23 +121,23 @@ export default class NetworkingClient extends Networking {
     }
 
     for (let snapshotObject of snapshot.objects) {
-      const object = this.networkedObjects.get(snapshotObject.id)!;
+      const object = this.networkedEntities.get(snapshotObject.id)!;
 
       object
-        .getComponent(NetworkedObject)
-        .clientDeserialize(snapshotObject.state, this.networkedObjects);
+        .getComponent(NetworkedEntity)
+        .clientDeserialize(snapshotObject.state, this.networkedEntities);
 
       unseenIds.delete(snapshotObject.id);
     }
 
     for (let unseenId of unseenIds) {
-      this.pearl.entities.destroy(this.networkedObjects.get(unseenId)!);
+      this.pearl.entities.destroy(this.networkedEntities.get(unseenId)!);
     }
   }
 
   private handleRpc(rpc: RpcMessage) {
     const { objectId, componentName, methodName, args } = rpc;
-    const obj = this.networkedObjects.get(objectId);
+    const obj = this.networkedEntities.get(objectId);
 
     if (!obj) {
       console.warn(

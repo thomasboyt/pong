@@ -1,7 +1,7 @@
 import { GameObject } from 'pearl';
 
 import Networking, { Snapshot, SnapshotObject } from './Networking';
-import NetworkedObject from './NetworkedObject';
+import NetworkedEntity from './NetworkedEntity';
 import Delegate from '../util/Delegate';
 import HostConnection from '../HostConnection';
 
@@ -248,16 +248,16 @@ export default class NetworkingHost extends Networking {
   private serializeSnapshot(): Snapshot {
     this.snapshotClock += 1;
 
-    const networkedObjects = [...this.networkedObjects.values()];
+    const networkedEntities = [...this.networkedEntities.values()];
 
-    const serializedObjects: SnapshotObject[] = networkedObjects.map(
+    const serializedObjects: SnapshotObject[] = networkedEntities.map(
       (entity) => {
-        const networkedObject = entity.getComponent(NetworkedObject);
+        const networkedEntity = entity.getComponent(NetworkedEntity);
 
         return {
-          id: networkedObject.id,
-          type: networkedObject.type,
-          state: networkedObject.hostSerialize(),
+          id: networkedEntity.id,
+          type: networkedEntity.type,
+          state: networkedEntity.hostSerialize(),
         };
       }
     );
@@ -270,7 +270,7 @@ export default class NetworkingHost extends Networking {
 
   private wrapRpcFunctions(object: GameObject) {
     const components = object.components;
-    const objectId = object.getComponent(NetworkedObject).id;
+    const objectId = object.getComponent(NetworkedEntity).id;
 
     for (let component of components) {
       const componentName = component.constructor.name;
