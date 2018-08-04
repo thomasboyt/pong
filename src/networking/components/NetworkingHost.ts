@@ -249,15 +249,13 @@ export default class NetworkingHost extends Networking {
     const networkedObjects = [...this.networkedObjects.values()];
 
     const serializedObjects: SnapshotObject[] = networkedObjects.map(
-      (networkedObject) => {
-        const { id, type, serialize } = networkedObject.getComponent(
-          NetworkedObject
-        );
+      (entity) => {
+        const networkedObject = entity.getComponent(NetworkedObject);
 
         return {
-          id,
-          type,
-          state: serialize(networkedObject),
+          id: networkedObject.id,
+          type: networkedObject.type,
+          state: networkedObject.hostSerialize(),
         };
       }
     );

@@ -124,7 +124,7 @@ export default class NetworkingClient extends Networking {
 
       object
         .getComponent(NetworkedObject)
-        .deserialize(object, snapshotObject.state, this.networkedObjects);
+        .clientDeserialize(snapshotObject.state, this.networkedObjects);
 
       unseenIds.delete(snapshotObject.id);
     }

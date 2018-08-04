@@ -12,25 +12,19 @@ export interface Snapshot {
   clock: number;
 }
 
-export interface NetworkedPrefab<Snapshot> {
+export interface NetworkedPrefab {
   type: string;
   tags?: string[];
   zIndex?: number;
   createComponents: (pearl: PearlInstance) => Component<any>[];
-  serialize: (obj: GameObject) => Snapshot;
-  deserialize: (
-    obj: GameObject,
-    snapshot: Snapshot,
-    objectsById: Map<string, GameObject>
-  ) => void;
 }
 
 interface Opts {
-  prefabs: { [_: string]: NetworkedPrefab<any> };
+  prefabs: { [_: string]: NetworkedPrefab };
 }
 
 export default abstract class Networking extends Component<Opts> {
-  prefabs!: { [_: string]: NetworkedPrefab<any> };
+  prefabs!: { [_: string]: NetworkedPrefab };
   networkedObjects = new Map<string, GameObject>();
   localPlayerId?: number;
 
@@ -38,7 +32,7 @@ export default abstract class Networking extends Component<Opts> {
     this.prefabs = opts.prefabs;
   }
 
-  protected getPrefab(prefabName: string): NetworkedPrefab<any> {
+  protected getPrefab(prefabName: string): NetworkedPrefab {
     const prefab = this.prefabs[prefabName];
 
     if (!prefab) {
@@ -49,7 +43,7 @@ export default abstract class Networking extends Component<Opts> {
   }
 
   protected instantiatePrefab(
-    prefab: NetworkedPrefab<any>,
+    prefab: NetworkedPrefab,
     id?: string
   ): GameObject {
     const components = prefab.createComponents(this.pearl);
@@ -63,8 +57,6 @@ export default abstract class Networking extends Component<Opts> {
         new NetworkedObject({
           networking: this,
           type: prefab.type,
-          serialize: prefab.serialize,
-          deserialize: prefab.deserialize,
           id,
         }),
       ],
