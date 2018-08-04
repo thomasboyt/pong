@@ -1,6 +1,6 @@
-import { GameObject } from 'pearl';
+import { Entity } from 'pearl';
 
-import Networking, { Snapshot, SnapshotObject } from './Networking';
+import Networking, { Snapshot, EntitySnapshot } from './Networking';
 import NetworkedEntity from './NetworkedEntity';
 import Delegate from '../util/Delegate';
 import HostConnection from '../HostConnection';
@@ -48,7 +48,7 @@ interface AddPlayerOpts {
 }
 
 export interface RpcMessage {
-  objectId: string;
+  entityId: string;
   componentName: string;
   methodName: string;
   args: any[];
@@ -226,11 +226,11 @@ export default class NetworkingHost extends Networking {
     }
   }
 
-  createNetworkedPrefab(name: string): GameObject {
+  createNetworkedPrefab(name: string): Entity {
     const prefab = this.getPrefab(name);
-    const obj = this.instantiatePrefab(prefab);
-    this.wrapRpcFunctions(obj);
-    return obj;
+    const entity = this.instantiatePrefab(prefab);
+    this.wrapRpcFunctions(entity);
+    return entity;
   }
 
   private sendToPeers(
@@ -250,7 +250,7 @@ export default class NetworkingHost extends Networking {
 
     const networkedEntities = [...this.networkedEntities.values()];
 
-    const serializedObjects: SnapshotObject[] = networkedEntities.map(
+    const serializedEntities: EntitySnapshot[] = networkedEntities.map(
       (entity) => {
         const networkedEntity = entity.getComponent(NetworkedEntity);
 
@@ -263,14 +263,14 @@ export default class NetworkingHost extends Networking {
     );
 
     return {
-      objects: serializedObjects,
+      entities: serializedEntities,
       clock: this.snapshotClock,
     };
   }
 
-  private wrapRpcFunctions(object: GameObject) {
-    const components = object.components;
-    const objectId = object.getComponent(NetworkedEntity).id;
+  private wrapRpcFunctions(entity: Entity) {
+    const components = entity.components;
+    const entityId = entity.getComponent(NetworkedEntity).id;
 
     for (let component of components) {
       const componentName = component.constructor.name;
@@ -286,7 +286,7 @@ export default class NetworkingHost extends Networking {
           originalFn(...args);
 
           this.dispatchRpc({
-            objectId,
+            entityId,
             // maybe replace this with a component ID at some point...
             componentName,
             methodName,

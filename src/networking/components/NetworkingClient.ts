@@ -1,4 +1,4 @@
-import { GameObject } from 'pearl';
+import { Entity } from 'pearl';
 import Networking, { Snapshot } from './Networking';
 
 // TODO: replace this with something better?
@@ -95,7 +95,7 @@ export default class NetworkingClient extends Networking {
     this.connection.send(JSON.stringify(msg));
   }
 
-  private createNetworkedPrefab(name: string, id: string): GameObject {
+  private createNetworkedPrefab(name: string, id: string): Entity {
     const prefab = this.getPrefab(name);
     return this.instantiatePrefab(prefab, id);
   }
@@ -112,22 +112,22 @@ export default class NetworkingClient extends Networking {
     // first, find any prefabs that don't exist, and create them. this happens
     // first so entities that are created on the same frame can still be linked
     // together
-    const newObjects = snapshot.objects.filter(
-      (obj) => !this.networkedEntities.has(obj.id)
+    const newEntities = snapshot.entities.filter(
+      (entity) => !this.networkedEntities.has(entity.id)
     );
 
-    for (let snapshotObject of newObjects) {
-      this.createNetworkedPrefab(snapshotObject.type, snapshotObject.id);
+    for (let snapshotEntity of newEntities) {
+      this.createNetworkedPrefab(snapshotEntity.type, snapshotEntity.id);
     }
 
-    for (let snapshotObject of snapshot.objects) {
-      const object = this.networkedEntities.get(snapshotObject.id)!;
+    for (let snapshotEntity of snapshot.entities) {
+      const entity = this.networkedEntities.get(snapshotEntity.id)!;
 
-      object
+      entity
         .getComponent(NetworkedEntity)
-        .clientDeserialize(snapshotObject.state, this.networkedEntities);
+        .clientDeserialize(snapshotEntity.state, this.networkedEntities);
 
-      unseenIds.delete(snapshotObject.id);
+      unseenIds.delete(snapshotEntity.id);
     }
 
     for (let unseenId of unseenIds) {
@@ -136,18 +136,18 @@ export default class NetworkingClient extends Networking {
   }
 
   private handleRpc(rpc: RpcMessage) {
-    const { objectId, componentName, methodName, args } = rpc;
-    const obj = this.networkedEntities.get(objectId);
+    const { entityId, componentName, methodName, args } = rpc;
+    const entity = this.networkedEntities.get(entityId);
 
-    if (!obj) {
+    if (!entity) {
       console.warn(
-        `ignoring rpc for nonexistent object -
+        `ignoring rpc for nonexistent entity ${entityId} -
         ${rpc.componentName}, ${rpc.methodName}`
       );
       return;
     }
 
-    const component = obj.components.find(
+    const component = entity.components.find(
       (component) => component.constructor.name === componentName
     );
 

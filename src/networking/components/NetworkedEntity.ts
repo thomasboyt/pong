@@ -1,4 +1,4 @@
-import { Component, GameObject, Entity } from 'pearl';
+import { Component, Entity } from 'pearl';
 import Networking from './Networking';
 import * as uuidv4 from 'uuid/v4';
 
@@ -63,7 +63,7 @@ export default class NetworkedEntity extends Component<Opts> {
 
   onDestroy() {
     if (this.networking) {
-      this.networking.deregisterNetworkedEntity(this.gameObject);
+      this.networking.deregisterNetworkedEntity(this.entity);
     }
   }
 }

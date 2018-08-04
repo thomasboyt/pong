@@ -1,14 +1,14 @@
-import { Component, GameObject, PearlInstance } from 'pearl';
+import { Component, Entity, PearlInstance } from 'pearl';
 import NetworkedEntity from './NetworkedEntity';
 
-export interface SnapshotObject {
+export interface EntitySnapshot {
   id: string;
   type: string;
   state: any;
 }
 
 export interface Snapshot {
-  objects: SnapshotObject[];
+  entities: EntitySnapshot[];
   clock: number;
 }
 
@@ -25,7 +25,7 @@ interface Opts {
 
 export default abstract class Networking extends Component<Opts> {
   prefabs!: { [_: string]: NetworkedPrefab };
-  networkedEntities = new Map<string, GameObject>();
+  networkedEntities = new Map<string, Entity>();
   localPlayerId?: number;
   abstract isHost: boolean;
 
@@ -43,13 +43,10 @@ export default abstract class Networking extends Component<Opts> {
     return prefab;
   }
 
-  protected instantiatePrefab(
-    prefab: NetworkedPrefab,
-    id?: string
-  ): GameObject {
+  protected instantiatePrefab(prefab: NetworkedPrefab, id?: string): Entity {
     const components = prefab.createComponents(this.pearl);
 
-    const obj = new GameObject({
+    const entity = new Entity({
       name: prefab.type,
       tags: [prefab.type, ...(prefab.tags || [])],
       zIndex: prefab.zIndex || 0,
@@ -63,16 +60,16 @@ export default abstract class Networking extends Component<Opts> {
       ],
     });
 
-    this.pearl.entities.add(obj);
+    this.pearl.entities.add(entity);
 
-    const networked = obj.getComponent(NetworkedEntity);
-    this.networkedEntities.set(networked.id, obj);
+    const networked = entity.getComponent(NetworkedEntity);
+    this.networkedEntities.set(networked.id, entity);
 
-    return obj;
+    return entity;
   }
 
-  deregisterNetworkedEntity(obj: GameObject) {
-    const networked = obj.getComponent(NetworkedEntity);
+  deregisterNetworkedEntity(entity: Entity) {
+    const networked = entity.getComponent(NetworkedEntity);
     this.networkedEntities.delete(networked.id);
   }
 
